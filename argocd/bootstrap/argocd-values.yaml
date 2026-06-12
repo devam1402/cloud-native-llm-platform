@@ -18,4 +18,4 @@ repoServer:
     requests: { cpu: 100m, memory: 256Mi }
 redis:
   resources:
-    requests: { cpu: 50m, memory: 64Mi }git
+    requests: { cpu: 50m, memory: 64Mi }
