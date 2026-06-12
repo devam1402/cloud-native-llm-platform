@@ -1,0 +1,21 @@
+# Spot toleration for every ArgoCD component — required on our tainted nodes
+global:
+  tolerations:
+    - key: cloud.google.com/gke-spot
+      operator: Equal
+      value: "true"
+      effect: NoSchedule
+
+# Dev-grade sizing — this is a 1-node-min cluster
+controller:
+  resources:
+    requests: { cpu: 250m, memory: 512Mi }
+server:
+  resources:
+    requests: { cpu: 100m, memory: 128Mi }
+repoServer:
+  resources:
+    requests: { cpu: 100m, memory: 256Mi }
+redis:
+  resources:
+    requests: { cpu: 50m, memory: 64Mi }git
