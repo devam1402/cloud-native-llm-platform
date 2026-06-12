@@ -40,14 +40,16 @@ spec:
           env:
             - name: HF_HUB_OFFLINE
               value: "1"
+            - name: VLLM_CPU_KVCACHE_SPACE
+              value: "1"          # GiB — without this, vLLM defaults to 4 and OOMs
           ports:
             - containerPort: 8000
           resources:
             requests:
               cpu: "1"
-              memory: 2Gi
-            limits:
               memory: 3Gi
+            limits:
+              memory: 4Gi
           readinessProbe:
             httpGet:
               path: /health
