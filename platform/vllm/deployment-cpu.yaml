@@ -17,14 +17,16 @@ spec:
     spec:
       containers:
         - name: vllm
-          image: public.ecr.aws/q9t5s3a7/vllm-cpu-release-repo:v0.9.1
+          image: vllm/vllm-openai:v0.9.1
           args:
             - "--model"
             - "facebook/opt-125m"
-            - "--max-model-len"
-            - "1024"
+            - "--device"
+            - "cpu"
             - "--dtype"
             - "float32"
+            - "--max-model-len"
+            - "1024"
           ports:
             - containerPort: 8000
           resources:
@@ -37,5 +39,5 @@ spec:
             httpGet:
               path: /health
               port: 8000
-            initialDelaySeconds: 30
+            initialDelaySeconds: 60
             periodSeconds: 10
