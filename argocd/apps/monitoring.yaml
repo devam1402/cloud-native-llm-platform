@@ -1,0 +1,37 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: monitoring
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://prometheus-community.github.io/helm-charts
+    chart: kube-prometheus-stack
+    targetRevision: 75.6.0
+    helm:
+      values: |
+        grafana:
+          adminPassword: changeme-grafana-2026
+          resources:
+            requests: { cpu: 100m, memory: 128Mi }
+        prometheus:
+          prometheusSpec:
+            retention: 7d
+            resources:
+              requests: { cpu: 250m, memory: 512Mi }
+            # Allow ServiceMonitors from ANY namespace (vllm, litellm later)
+            serviceMonitorSelectorNilUsesHelmValues: false
+            podMonitorSelectorNilUsesHelmValues: false
+        alertmanager:
+          enabled: false   # no alert receivers yet — enable when SLOs are wired
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: monitoring
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true   # the CRDs in this chart are huge — required to avoid argocd timeouts
