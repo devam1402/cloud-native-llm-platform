@@ -21,9 +21,16 @@ spec:
           command: ["/bin/sh", "-c"]
           args:
             - |
-              mc alias set platform http://minio.minio.svc.cluster.local:9000 admin changeme-platform-2026
+              set -e
+              for i in 1 2 3 4 5; do
+                if mc alias set platform http://minio.minio.svc.cluster.local:9000 admin changeme-platform-2026; then
+                  echo "MinIO alias set on attempt $i"; break
+                fi
+                echo "Attempt $i failed, retrying in 5s..."; sleep 5
+              done
               mc cp --recursive platform/models/opt-125m/ /model-cache/
-              echo "Model staged successfully"
+              test -f /model-cache/config.json || { echo "FATAL: config.json missing"; exit 1; }
+              echo "Model staged and verified."
           volumeMounts:
             - name: model-cache
               mountPath: /model-cache
@@ -33,6 +40,8 @@ spec:
           args:
             - "--model"
             - "/model-cache"
+            - "--served-model-name"
+            - "opt-125m"
             - "--dtype"
             - "float32"
             - "--max-model-len"
@@ -41,7 +50,7 @@ spec:
             - name: HF_HUB_OFFLINE
               value: "1"
             - name: VLLM_CPU_KVCACHE_SPACE
-              value: "1"          # GiB — without this, vLLM defaults to 4 and OOMs
+              value: "1"
           ports:
             - containerPort: 8000
           resources:
