@@ -18,5 +18,4 @@ data:
     general_settings:
       master_key: os.environ/LITELLM_MASTER_KEY
       store_model_in_db: false
-      disable_spend_logs: true
-      disable_error_logs: true
+      allow_requests_on_db_unavailable: true
