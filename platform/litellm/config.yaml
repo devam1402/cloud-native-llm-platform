@@ -6,24 +6,17 @@ metadata:
 data:
   config.yaml: |
     model_list:
-      # CPU smoke-test model (in-cluster)
       - model_name: opt-125m
         litellm_params:
           model: openai//model-cache
           api_base: http://vllm-cpu.vllm.svc.cluster.local:8000/v1
           api_key: "none"
-
-      # Future: RunPod L4 endpoint — uncomment when rented
-      # - model_name: qwen2.5-7b-awq
-      #   litellm_params:
-      #     model: openai/Qwen/Qwen2.5-7B-Instruct-AWQ
-      #     api_base: https://<runpod-id>-8000.proxy.runpod.net/v1
-      #     api_key: os.environ/RUNPOD_VLLM_KEY
-
     litellm_settings:
       drop_params: true
       num_retries: 2
       request_timeout: 120
-
     general_settings:
-      master_key: os.environ/LITELLM_MASTER_KEY   # auth for all callers
+      master_key: os.environ/LITELLM_MASTER_KEY
+      store_model_in_db: false
+      disable_spend_logs: true
+      disable_error_logs: true
