@@ -8,7 +8,7 @@ data:
     model_list:
       - model_name: opt-125m
         litellm_params:
-          model: openai//model-cache
+          model: openai/opt-125m
           api_base: http://vllm-cpu.vllm.svc.cluster.local:8000/v1
           api_key: "none"
     litellm_settings:
@@ -19,3 +19,4 @@ data:
       master_key: os.environ/LITELLM_MASTER_KEY
       store_model_in_db: false
       allow_requests_on_db_unavailable: true
+      
