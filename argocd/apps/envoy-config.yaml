@@ -1,0 +1,15 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: envoy-config
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/devam1402/cloud-native-llm-platform
+    targetRevision: main
+    path: platform/envoy
+  destination:
+    server: https://kubernetes.default.svc
+  syncPolicy:
+    automated: { prune: true, selfHeal: true }
