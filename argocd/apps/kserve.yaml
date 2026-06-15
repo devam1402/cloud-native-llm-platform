@@ -9,16 +9,13 @@ spec:
   project: default
   source:
     repoURL: ghcr.io/kserve/charts
-    chart: kserve-resources
+    chart: kserve
     targetRevision: v0.16.0
     helm:
       values: |
         kserve:
           controller:
-            deploymentMode: "RawDeployment"
-            gateway:
-              ingressGateway:
-                enableGatewayApi: true
+            deploymentMode: "Standard"
           resources:
             requests: { cpu: 100m, memory: 128Mi }
   destination:
