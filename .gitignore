@@ -3,3 +3,5 @@
 *.tfstate.*
 terraform.tfvars
 .terraform.lock.hcl
+platform/litellm/secrets.yaml
+platform/kserve/minio-storage.yaml
