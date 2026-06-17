@@ -3,12 +3,11 @@ kind: InferenceService
 metadata:
   name: opt-125m
   namespace: kserve
-  annotations:
-    serving.kserve.io/deploymentMode: RawDeployment
 spec:
   predictor:
+    serviceAccountName: minio-sa
     model:
       modelFormat:
         name: vllm
       runtime: vllm-cpu-runtime
-      storageUri: "s3://models/opt-125m"   # ← from MinIO
+      storageUri: s3://models/opt-125m
