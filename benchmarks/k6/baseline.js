@@ -27,7 +27,8 @@ export const options = {
 
 // ── Config (override with -e flags at runtime) ──────────────────
 const GATEWAY = __ENV.GATEWAY_URL || 'http://34.93.212.31';
-const API_KEY = __ENV.API_KEY || 'sk-placeholder';
+
+
 const MODEL   = __ENV.MODEL || 'opt-125m';
 
 // Shared prompt — consistent across runs for comparability
