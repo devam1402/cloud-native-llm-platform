@@ -9,9 +9,15 @@ spec:
     repoURL: https://kedacore.github.io/charts
     chart: keda
     targetRevision: 2.16.1
+    helm:
+      parameters:
+        - name: crds.install
+          value: "true"
   destination:
     server: https://kubernetes.default.svc
     namespace: keda
   syncPolicy:
     automated: { prune: true, selfHeal: true }
-    syncOptions: [CreateNamespace=true]
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true
