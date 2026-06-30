@@ -1,0 +1,19 @@
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: vllm-scaler
+  namespace: vllm
+spec:
+  scaleTargetRef:
+    name: vllm-cpu
+  minReplicaCount: 1
+  maxReplicaCount: 4
+  cooldownPeriod: 120
+  pollingInterval: 15
+  triggers:
+    - type: prometheus
+      metadata:
+        serverAddress: http://monitoring-kube-prometheus-prometheus.monitoring.svc.cluster.local:9090
+        metricName: vllm_requests_waiting
+        threshold: "3"
+        query: sum(vllm:num_requests_waiting{namespace="vllm"})

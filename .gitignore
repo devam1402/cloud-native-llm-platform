@@ -8,3 +8,4 @@ platform/kserve/minio-storage.yaml
 .venv/
 *.venv
 venv/
+*.venv

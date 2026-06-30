@@ -19,7 +19,7 @@ export const options = {
   ],
   thresholds: {
     // Generous for CPU baseline — this is a path test, not a perf test
-    http_req_duration: ['p95<15000'],     // p95 under 15s
+    http_req_duration: ['p(95)<15000'],     // p95 under 15s
     http_req_failed:   ['rate<0.10'],     // under 10% errors
     completion_errors: ['rate<0.10'],
   },
