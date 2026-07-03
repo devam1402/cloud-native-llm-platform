@@ -1,0 +1,74 @@
+# Phase A: vLLM + LMCache (in-process CPU offload) — side-by-side with vllm-cpu.
+# Image: lmcache/vllm-openai bundles vLLM + LMCache (official LMCache release image).
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vllm-lmcache
+  namespace: vllm
+  labels:
+    app: vllm-lmcache
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: vllm-lmcache
+  template:
+    metadata:
+      labels:
+        app: vllm-lmcache
+    spec:
+      initContainers:
+        - name: model-loader
+          image: minio/mc:latest
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              mc alias set platform http://minio.minio.svc.cluster.local:9000 admin changeme-platform-2026 &&
+              mc cp --recursive platform/models/opt-125m/ /models/opt-125m/ &&
+              echo "model staged" && ls -la /models/opt-125m/
+          volumeMounts:
+            - name: models
+              mountPath: /models
+      containers:
+        - name: vllm
+          image: lmcache/vllm-openai:v0.5.0
+          args:
+            - "serve"
+            - "/models/opt-125m"
+            - "--served-model-name=opt-125m-lmcache"
+            - "--port=8000"
+            - "--max-model-len=1024"
+            - "--kv-offloading-backend=lmcache"
+            - "--kv-offloading-size=2"
+            - "--disable-hybrid-kv-cache-manager"
+          env:
+            - name: HF_HUB_OFFLINE
+              value: "1"
+            - name: VLLM_CPU_KVCACHE_SPACE
+              value: "1"
+          ports:
+            - containerPort: 8000
+          resources:
+            requests: { cpu: "2", memory: 5Gi }
+            limits: { memory: 7Gi }
+          volumeMounts:
+            - name: models
+              mountPath: /models
+      volumes:
+        - name: models
+          emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: vllm-lmcache
+  namespace: vllm
+  labels:
+    app: vllm-lmcache        # ← labeled from day one (today's KEDA lesson)
+spec:
+  selector:
+    app: vllm-lmcache
+  ports:
+    - name: http
+      port: 8000
+      targetPort: 8000
